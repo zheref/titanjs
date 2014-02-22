@@ -1,0 +1,29 @@
+{
+  "name": "titanjs",
+  "version": "0.6.0",
+  "homepage": "https://github.com/zheref/titanjs",
+  "authors": [
+    "Sergio Daniel Lozano <zheref@gmail.com>"
+  ],
+  "description": "Open Source HTML5 Mobile Framework aiming to Tablets Phonegap Apps",
+  "main": "titan.js",
+  "keywords": [
+    "titan",
+    "phonegap",
+    "cordova",
+    "tablets",
+    "library",
+    "javascript",
+    "crud",
+    "framework",
+    "workflow"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

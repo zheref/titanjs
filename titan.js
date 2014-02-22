@@ -38,7 +38,7 @@
  * JS-Signals for Titan.Signals
  * Amplidy for Titan.Proxy
  * @pattern module
- * @version 0.5.9
+ * @version 0.6
  */
 //noinspection JSUnusedGlobalSymbols
 var Titan = (function() {

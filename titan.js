@@ -675,7 +675,7 @@ var Titan = (function() {
              * @public
              * @async
              * @method
-             * @param {Object} configuration
+             * @param {{name: String, description: String, size: String}} configuration
              * @param {function()=} atFinish
              */
             this.init = function(configuration, atFinish) {
@@ -872,7 +872,7 @@ var Titan = (function() {
              * @param {Object} schema El esquema de datos de la tabla con sus columnas descritas
              * @param {SQLTransaction} transaction El objeto de transaccion generado por la base de datos
              * @param {function()=} atSuccess Callback que se ejecuta cuando este procedimiento atomico termina exitosamente
-             * @param {function()=} atError Callback que se ejecuta cuando este procedimiento termina con errores o no termina
+             * @param {function(Titan.Error.Crash)=} atError Callback que se ejecuta cuando este procedimiento termina con errores o no termina
              * TODO: Por ahora se asume que todas las columnas son un STRING denotando todo el concepto de al columna.
              * TODO: ...Se pretende, por tanto hacer que funcione tanto como si es un STRING o un OBJETO dentando independientemente cada caracteristica de la columna
              */
@@ -1327,6 +1327,30 @@ var Titan = (function() {
                 }, function(error) {
                     self.Notifier.report("Error trying to insert record", 'Titan.Database.insertInto', error, atError);
                 }, transact);
+            };
+
+            /**
+             * @public
+             * @async
+             * @method
+             * @param {String} tablename
+             * @param {Array.<Object>} jsonRecords
+             * @param {Function} atSuccess
+             * @param {function(Titan.Error.Crash)} atError
+             * @param {SQLTransaction} transact
+             */
+            this.insertsInto = function(tablename, jsonRecords, atSuccess, atError, transact) {
+                self.Behaviour.recursiveAsyncLoop(jsonRecords, function(jsonRecord, goon, exit) {
+                    selfDatabase.insertInto(tablename, jsonRecord, function(transaction) {
+                        goon(transaction);
+                    }, function(error) {
+                        exit();
+                    }, transact);
+                }, function() {
+                    atSuccess();
+                }, function() {
+                    atError();
+                });
             };
 
             /**

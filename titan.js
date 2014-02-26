@@ -941,6 +941,7 @@ var Titan = (function() {
              * @param {function(SQLTransaction=)=} atSuccess To execute just after the execution and/or retrieval of the last item
              * @param {function()=} atError To execute in case the retrieval fails
              * @param {function()=} atNoResults To execute if no rows have been retrieved
+             * @error TDB101: When fails selecting the query specified
              */
             this.list = function(query, data, atEach, atSuccess, atError, atNoResults) {
                 var B = self.Behaviour,
@@ -961,7 +962,7 @@ var Titan = (function() {
                         self.Behaviour.exe(atNoResults);
                     }
                 }, function (error) {
-                    N.error("StackTrace: Titan.Database.list");
+                    N.error("StackTrace TDB101: Titan.Database.list - Failed to select query '{{query}}'", { query: query });
                     B.exe(atError, error);
                 });
             };
@@ -1337,7 +1338,7 @@ var Titan = (function() {
              * @param {Array.<Object>} jsonRecords
              * @param {Function} atSuccess
              * @param {function(Titan.Error.Crash)} atError
-             * @param {SQLTransaction} transact
+             * @param {SQLTransaction=} transact
              */
             this.insertsInto = function(tablename, jsonRecords, atSuccess, atError, transact) {
                 self.Behaviour.recursiveAsyncLoop(jsonRecords, function(jsonRecord, goon, exit) {
@@ -2925,8 +2926,8 @@ var Titan = (function() {
              * @returns {*}
              */
             this.sql = function(key, bag) {
-                if (templates.hasOwnProperty(key)) {
-                    return _.template(templates[key], bag, interpolateQueryOverride);
+                if (queries.hasOwnProperty(key)) {
+                    return _.template(queries[key], bag, interpolateQueryOverride);
                 } else {
                     throw new Error("TitanJS: '" + key + "' query resource is not defined");
                 }

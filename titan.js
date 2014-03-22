@@ -36,9 +36,9 @@
  * Accounting.js for Titan.Utils
  * Handlebars for Titan.strategy
  * JS-Signals for Titan.Signals
- * Amplidy for Titan.Proxy
+ * Amplify for Titan.Proxy
  * @pattern module
- * @version 0.6
+ * @version 0.6.3
  */
 //noinspection JSUnusedGlobalSymbols
 var Titan = (function() {
@@ -3225,15 +3225,23 @@ var Titan = (function() {
              */
             this.isOnline = function () {
                 if (typeof (navigator) !== 'undefined') {
-                    //noinspection JSUnresolvedVariable
-                    var networkState = navigator.connection.type;
-                    self.Debug.log("The connection has been detected as: " + networkState);
-                    //noinspection JSUnresolvedVariable
-                    return networkState === Connection.WIFI ||
-                        networkState === Connection.CELL ||
-                        networkState === Connection.CELL_2G ||
-                        networkState === Connection.CELL_3G ||
-                        networkState === Connection.CELL_4G;
+                    if (typeof (navigator.connection) !== 'undefined') {
+                        //noinspection JSUnresolvedVariable
+                        var networkState = navigator.connection.type;
+                        self.Debug.log("The connection has been detected as: " + networkState);
+                        //noinspection JSUnresolvedVariable
+                        return networkState === Connection.WIFI ||
+                            networkState === Connection.CELL ||
+                            networkState === Connection.CELL_2G ||
+                            networkState === Connection.CELL_3G ||
+                            networkState === Connection.CELL_4G;
+                    } else if (typeof (navigator.onLine) !== 'undefined') {
+                        return navigator.onLine;
+                    } else {
+                        throw "TitanJS: Impossible to detect connection: Cordova library " +
+                            "has not been loaded or ready to its use and the navigator doesn't " +
+                            " provide a way to check connection availability";
+                    }
                 } else {
                     throw "TitanJS: Impossible to detect connection: Cordova library " +
                         "has not been loaded or ready to its use";

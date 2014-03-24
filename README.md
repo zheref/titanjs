@@ -6,6 +6,11 @@ Open Source HTML5 Mobile Framework aiming to Tablets Phonegap Apps
 ##Release Notes##
 ***
 
+###0.6.4 / 2014 - 03 - 23###
+***
+
+- FIX: Titan.Database##interpretErrorCode() is not using anymore the SQLError object to use error code constants. Insted, now using the literal codes themselves.
+
 ###0.6.3 / 2014 - 03 - 22###
 ***
 

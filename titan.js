@@ -38,7 +38,7 @@
  * JS-Signals for Titan.Signals
  * Amplify for Titan.Proxy
  * @pattern module
- * @version 0.6.3
+ * @version 0.6.4
  */
 //noinspection JSUnusedGlobalSymbols
 var Titan = (function() {
@@ -738,21 +738,21 @@ var Titan = (function() {
                 var U = self.Utils;
 
                 switch (errorCode) {
-                    case SQLError.UNKNOWN_ERR:
+                    case 0:
                         return U.I("Error DB001: Unidentified non-database error while trying to execute statement: \"{{query}}\" during current transaction", {query: query});
-                    case SQLError.DATABASE_ERR:
+                    case 1:
                         return U.I("Error DB002: Unidentified database error while executing statement: \"{{query}}\"", {query: query});
-                    case SQLError.VERSION_ERR:
-                        return U.I("Error DB003: The actual database version was not what it should be due to no longer matched the expected version of the Database object");
-                    case SQLError.TOO_LARGE_ERR:
+                    case 2:
+                        return "Error DB003: The actual database version was not what it should be due to no longer matched the expected version of the Database object";
+                    case 3:
                         return U.I("Error DB004: Data retrieved from the database by \"{{query}}\" query was too large. The ResultSet size must be reduced", {query: query});
-                    case SQLError.QUOTA_ERR:
+                    case 4:
                         return "Error DB005: There was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database";
-                    case SQLError.SYNTAX_ERR:
+                    case 5:
                         return U.I("Error DB006: Syntax error or not-allowed statement in \"{{query}}\" query", {query: query});
-                    case SQLError.CONSTRAINT_ERR:
+                    case 6:
                         return U.I("Error DB007: Constraint error in statement \"{{query}}\"", {query: query});
-                    case SQLError.TIMEOUT_ERR:
+                    case 7:
                         return U.I("Error DB008: Timeout error while executing statement \"{{query}}\"", {query: query});
                     default:
                         return U.I("Error DB001: Unidentified non-database error while trying to execute statement: \"{{query}}\" during current transaction", {query: query});

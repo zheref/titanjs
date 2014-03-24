@@ -6,6 +6,13 @@ Open Source HTML5 Mobile Framework aiming to Tablets Phonegap Apps
 ##Release Notes##
 ***
 
+###0.6.5 / 2014 - 03 - 24###
+***
+
+- CHANGE: Titan.Proxy.pushFile() now is using as aliasUrl and its related Url, the specified in the resources.js file, not anymore the setted up by addUploadUrl.
+- ADD: Titan.Resources.restRoute() to build and return complete rest url based on the 'REST' route
+- EXTEND: Now the default viewportId and additional viewportIds can be setted up
+
 ###0.6.4 / 2014 - 03 - 23###
 ***
 
@@ -20,6 +27,22 @@ Open Source HTML5 Mobile Framework aiming to Tablets Phonegap Apps
 
 ##API Reference##
 ***
+
+##Titan.Proxy##
+
+**pushFile(aliasUrl, filePath, filename, mimetype, atResponse, atError)**
+
+Send file specified by {filePath} to the URL in resources with name {aliasUrl}, and upload it with name {filename} and mimetype {mimetype}.
+After succeeding execute {atResponse} retrieving the server response.
+@public
+@async
+@method
+@param {String} aliasUrl The alias of the Upload URL saved previously
+@param {String} filePath The local filepath to the file
+@param {String} filename The name to save the file on the server
+@param {String} mimetype The mimetype of the file to transfer
+@param {function()} atResponse The action to be executed after transfer success
+@param {function()=} atError The action to be executed at any error in transfer
 
 ##Titan.Utils##
 

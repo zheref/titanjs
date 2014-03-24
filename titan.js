@@ -38,7 +38,7 @@
  * JS-Signals for Titan.Signals
  * Amplify for Titan.Proxy
  * @pattern module
- * @version 0.6.4
+ * @version 0.6.5
  */
 //noinspection JSUnusedGlobalSymbols
 var Titan = (function() {
@@ -76,6 +76,19 @@ var Titan = (function() {
 
                     var state = options.state || "";
 
+                    if (options.hasOwnProperty('viewportId')) {
+                        self.Views.setViewportId(options['viewportId']);
+                    }
+
+                    if (options.hasOwnProperty('viewportIds')) {
+                        var viewportIds = options['viewportIds'];
+                        for (var viewportAlias in viewportIds) {
+                            if (viewportIds.hasOwnProperty(viewportAlias)) {
+                                self.Views.addViewportId(viewportAlias, viewportIds[viewportAlias]);
+                            }
+                        }
+                    }
+
                     if (options.hasOwnProperty('views')) {
                         self.View.addViews(options.views);
                     }
@@ -102,6 +115,16 @@ var Titan = (function() {
                         if (res.hasOwnProperty('routes')) {
                             //noinspection JSUnresolvedVariable
                             self.Resources.addRoutes(res.routes);
+                        }
+                    }
+
+                    if (options.hasOwnProperty('env')) {
+                        //noinspection JSUnresolvedVariable
+                        var env = options.env;
+                        for (var key in env) {
+                            if (env.hasOwnProperty(key)) {
+                                Titan.Data.write(key, env[key]);
+                            }
                         }
                     }
 
@@ -2804,6 +2827,9 @@ var Titan = (function() {
             };
 
             /**
+             * Send file specified by {filePath} to the URL in resources with name
+             * {aliasUrl}, and upload it with name {filename} and mimetype {mimetype}
+             * After succeeding execute {atResponse} retrieving the server response.
              * @public
              * @async
              * @method
@@ -2812,35 +2838,36 @@ var Titan = (function() {
              * @param {String} filename The name to save the file on the server
              * @param {String} mimetype The mimetype of the file to transfer
              * @param {function()} atResponse The action to be executed after transfer success
-             * @param {function()} atError The action to be executed at any error in transfer
+             * @param {function()=} atError The action to be executed at any error in transfer
              */
             this.pushFile = function(aliasUrl, filePath, filename, mimetype, atResponse, atError) {
                 //noinspection UnnecessaryLocalVariableJS
                 var s = self,
-                    p = self.Proxy,
-                    d = self.Debug;
+                    N = self.Notifier,
+                    R = self.Resources;
+
                 if (s.isCordovaPresent()) {
                     //noinspection JSUnresolvedFunction
                     var options = new FileUploadOptions();
                     options.fileKey = "file";
                     options.fileName = filename;
                     options.mimeType = mimetype;
-                    d.log(options);
-                    var url = p.getUploadUrl(aliasUrl);
+                    N.log(options);
+                    var url = R.url(aliasUrl);
                     //noinspection JSUnresolvedFunction
                     var ft = new FileTransfer();
-                    d.log("Trying to upload file " + options.fileName);
+                    N.log("Trying to upload file " + options.fileName);
                     ft.upload(filePath, url, function(ftr) {
-                        d.log("TitanJS: '" + options.fileName +
+                        N.log("TitanJS: '" + options.fileName +
                             "' file uploaded successfully. Results: ");
                         //noinspection JSUnresolvedVariable
-                        d.log("bytesSent: " + ftr.bytesSent);
+                        N.log("bytesSent: " + ftr.bytesSent);
                         //noinspection JSUnresolvedVariable
-                        d.log("responseCode: " + ftr.responseCode);
-                        d.log("response: " + ftr.response);
+                        N.log("responseCode: " + ftr.responseCode);
+                        N.log("response: " + ftr.response);
                         s.Behaviour.exe(atResponse);
                     }, function(fte) {
-                        d.error("TitanJS: Error sending file. " + fte.code +
+                        N.error("TitanJS: Error sending file. " + fte.code +
                             ": " + s.Error.identifyError(fte.code));
                         s.Behaviour.exe(atError);
                     }, options);
@@ -2961,6 +2988,20 @@ var Titan = (function() {
              */
             this.completeRoute = function(key) {
                 return urls['BASE'] + "/" + (routes[key]).join("/");
+            };
+
+            //noinspection JSUnusedGlobalSymbols
+            /**
+             * Builds and returns the complete REST route based on the URL
+             * with name 'REST' and the route-array in resources with specified
+             * name in argument {key}
+             * @public
+             * @method
+             * @param {string} key The route-array name to found it on Resources
+             * @returns {string} The complete URL encoded route to be used
+             */
+            this.restRoute = function(key) {
+                return encodeURI(urls['REST'] + "/" + (routes[key]).join("/"));
             };
 
             /**
